@@ -11,99 +11,99 @@ import javaDungeon.game.Thing;
 
 public class Creature<T extends Bullet> extends Mob {
 
-    private T bullet;
+    private final int attackSpeed;
+    private volatile boolean shooting = false;
+    private volatile Direction shootDirection = Direction.DIR_UP;
+    private volatile T bullet;
+    private transient ScheduledFuture<?> attackHandler;
 
-    protected ScheduledFuture<?> attackHandler;
+    Creature(Color color, char glyph, Game game, int health, int speed, int attackSpeed) {
+        super(color, glyph, game, health, speed);
+        this.attackSpeed = attackSpeed;
+    }
+
+    public int getAttackSpeed() {
+        return attackSpeed;
+    }
+
+    public void startShooting() {
+        shooting = true;
+    }
+
+    public void stopShooting() {
+        shooting = false;
+    }
+
+    public boolean isShooting() {
+        return shooting;
+    }
+
+    public Direction getShootDirection() {
+        return shootDirection;
+    }
+
+    public void setShootDirection(Direction direction) {
+        shootDirection = direction;
+    }
 
     public void setBullet(T bullet) {
-        if (attackHandler != null) {
-            attackHandler.cancel(false);
-        }
         this.bullet = bullet;
-        bullet.owner = this;
-        attackHandler = game.scheduler.scheduleAtFixedRate(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    actionLock.lock();
-                    if (isAttacking()) {
-                        fireBullet(getAttackDir());
-                    }
-                } finally {
-                    actionLock.unlock();
-                }
-            }
-        }, 0, Mob.speedToMilliseconds(getAttackSpeed()), TimeUnit.MILLISECONDS);
     }
 
     public T getBullet() {
         return bullet;
     }
 
-    public void fireBullet(Direction attackDir) {
-        Thing front = queryAdjacent(attackDir);
+    public void startAttacking() {
+        if (attackHandler == null && bullet != null) {
+            attackHandler = Game.scheduler.scheduleAtFixedRate(new Runnable() {
 
-        if (front instanceof Floor) {
-            Bullet newBullet = bullet.clone();
-            newBullet.setDir(attackDir);
-            newBullet.startMoving();
-            world.putEntity(newBullet, front.getX(), front.getY());
-            newBullet.startAction();
+                @Override
+                public void run() {
+                    try {
+                        actionLock.lock();
+                        if (isShooting() && currentHealth() > 0) {
+                            Thing front = getAdjacent(shootDirection);
+                            if (front instanceof Floor) {
+                                Bullet newBullet = bullet.clone();
+                                newBullet.setDirection(shootDirection);
+                                newBullet.born(front.getX(), front.getY());
+                            }
+                        }
+                    } finally {
+                        actionLock.unlock();
+                    }
+                }
+
+            }, 0, 2000 / attackSpeed, TimeUnit.MILLISECONDS);
         }
     }
 
-    private final int attackSpeed;
-
-    public int getAttackSpeed() {
-        return attackSpeed;
+    public void stopAttacking() {
+        if (attackHandler != null) {
+            attackHandler.cancel(false);
+            attackHandler = null;
+        }
     }
 
-    private volatile boolean attacking = false;
-
-    public synchronized void startAttacking() {
-        attacking = true;
+    @Override
+    public void loseHealth(int damage) {
+        super.loseHealth(damage);
+        Game.consoleLog(this + " got " + damage + " damage, " + currentHealth() + " left.");
     }
 
-    public synchronized void stopAttacking() {
-        attacking = false;
-    }
-
-    public synchronized boolean isAttacking() {
-        return attacking;
-    }
-
-    private volatile Direction attackDir = Direction.DIR_UP;
-
-    public synchronized void setAttackDir(Direction attackDir) {
-        this.attackDir = attackDir;
-    }
-
-    public synchronized Direction getAttackDir() {
-        return attackDir;
-    }
-
-    Creature(Color color, char glyph, Game game, int health, int speed, int attackSpeed) {
-        super(color, glyph, game, health, speed);
-        this.attackSpeed = attackSpeed;
-        game.creatureFactory.incCreatureCount();
+    @Override
+    public void born(int x, int y) {
+        super.born(x, y);
+        startAttacking();
         Game.consoleLog(this + " created...");
     }
 
     @Override
-    public synchronized void loseHealth(int damage) {
-        Game.consoleLog(this + " got " + damage + " damage... ");
-        super.loseHealth(damage);
-        Game.consoleLog(this + " : " + getHealth());
-    }
-
-    @Override
     public void die() {
-        Game.consoleLog(this + " died...");
-        game.creatureFactory.decCreatureCount();
-        if (attackHandler != null) {
-            attackHandler.cancel(false);
-        }
+        stopAttacking();
         super.die();
+        Game.consoleLog(this + " died...");
     }
 
 }

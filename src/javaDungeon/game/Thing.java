@@ -1,12 +1,13 @@
 package javaDungeon.game;
 
 import java.awt.Color;
+import java.io.Serializable;
 
-public class Thing {
+public class Thing implements Serializable{
 
-    protected World world;
-
-    public Tile<? extends Thing> tile;
+    private final Color color;
+    private final char glyph;
+    private Tile<? extends Thing, ? extends Thing> tile;
 
     public int getX() {
         return this.tile.getxPos();
@@ -16,7 +17,7 @@ public class Thing {
         return this.tile.getyPos();
     }
 
-    public void setTile(Tile<? extends Thing> tile) {
+    public void setTile(Tile<? extends Thing, ? extends Thing> tile) {
         this.tile = tile;
     }
 
@@ -24,19 +25,14 @@ public class Thing {
         tile = null;
     }
 
-    public Thing(Color color, char glyph, World world) {
+    public Thing(Color color, char glyph) {
         this.color = color;
         this.glyph = glyph;
-        this.world = world;
     }
-
-    private final Color color;
 
     public Color getColor() {
         return this.color;
     }
-
-    private final char glyph;
 
     public char getGlyph() {
         return this.glyph;

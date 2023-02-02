@@ -13,12 +13,12 @@ import java.awt.event.KeyListener;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-public class Dungeon extends JFrame implements KeyListener {
+public class MainFrame extends JFrame implements KeyListener {
 
     private AsciiPanel terminal;
     private Screen screen;
 
-    public Dungeon() {
+    public MainFrame() {
         super();
         terminal = new AsciiPanel(World.WIDTH, World.HEIGHT, AsciiFont.CP437_16x16);
         add(terminal);
@@ -51,12 +51,14 @@ public class Dungeon extends JFrame implements KeyListener {
     }
 
     public static void main(String[] args) {
-        Dungeon frontend = new Dungeon();
+        MainFrame mainFrame = new MainFrame();
         Executors.newScheduledThreadPool(1).scheduleAtFixedRate(new Runnable() {
+
             @Override
             public void run() {
-                frontend.repaint();
+                mainFrame.repaint();
             }
+
         }, 0, 40, TimeUnit.MILLISECONDS);
     }
 

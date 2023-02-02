@@ -8,25 +8,31 @@ import javaDungeon.game.Thing;
 
 public class Bullet extends Mob {
 
-    public Creature<? extends Bullet> owner;
-
     private final int damage;
+    private Creature<? extends Bullet> owner;
+
+    Bullet(Color color, char glyph, Game game, int speed, int damage, Creature<? extends Bullet> owner) {
+        super(color, glyph, game, 1, speed);
+        this.damage = damage;
+        this.owner = owner;
+    }
 
     public int getDamage() {
         return damage;
     }
 
-    Bullet(Color color, char glyph, Game game, int speed, int damage) {
-        super(color, glyph, game, 1, speed);
-        this.damage = damage;
+    @Override
+    public void born(int x, int y) {
+        startMoving();
+        super.born(x, y);
     }
 
     @Override
-    public void see() {
-        Thing front = queryAdjacent(getDir());
+    public synchronized void see() {
+        Thing front = getAdjacent(getDirection());
         if (front instanceof Bullet) {
-            if (((Mob) front).getDir() != getDir()) {
-                loseHealth(getHealth());
+            if (((Mob) front).getDirection() != getDirection()) {
+                loseHealth(currentHealth());
             }
         } else if (front instanceof Creature) {
             if (owner instanceof Player && !(front instanceof Player)) {
@@ -34,16 +40,15 @@ public class Bullet extends Mob {
             } else if (!(owner instanceof Player) && front instanceof Player) {
                 ((Mob) front).loseHealth(damage);
             }
-            loseHealth(getHealth());
+            loseHealth(currentHealth());
         } else if (front instanceof Wall) {
-            loseHealth(getHealth());
+            loseHealth(currentHealth());
         }
     }
 
     @Override
     public Bullet clone() {
-        Bullet newBullet = new Bullet(getColor(), getGlyph(), game, getSpeed(), damage);
-        newBullet.owner = owner;
-        return newBullet;
+        return new Bullet(getColor(), getGlyph(), game, getSpeed(), damage, owner);
     }
+
 }

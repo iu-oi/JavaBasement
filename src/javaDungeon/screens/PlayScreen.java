@@ -1,9 +1,15 @@
 package javaDungeon.screens;
 
 import java.awt.event.KeyEvent;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 
 import asciiPanel.AsciiPanel;
-import javaDungeon.Dungeon;
+import javaDungeon.MainFrame;
 import javaDungeon.game.Direction;
 import javaDungeon.game.Game;
 import javaDungeon.game.Thing;
@@ -11,11 +17,70 @@ import javaDungeon.game.World;
 
 public class PlayScreen implements Screen {
 
+    private String dataSave;
+    private MainFrame mainFrame;
     private Game backend;
 
-    public PlayScreen(int playerId, Dungeon frontend) {
-        backend = new Game(frontend);
+    public PlayScreen(String dataSave, int playerId, MainFrame mainFrame) {
+        this.mainFrame = mainFrame;
+        this.dataSave = dataSave;
+        backend = new Game(this);
+        playGame(playerId);
+    }
+
+    public PlayScreen(String dataSave, MainFrame mainFrame) {
+        this.mainFrame = mainFrame;
+        this.dataSave = dataSave;
+        try {
+            FileInputStream fileInputStream = new FileInputStream(dataSave);
+            ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
+            backend = (Game) (objectInputStream.readObject());
+            objectInputStream.close();
+            fileInputStream.close();
+            backend.resume(this);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void playGame(int playerId) {
         backend.play(playerId);
+    }
+
+    public void quitGame(boolean gameStatus) {
+        backend.pause();
+        if (gameStatus) {
+            mainFrame.setScreen(new WinScreen(mainFrame));
+        } else {
+            mainFrame.setScreen(new LoseScreen(mainFrame));
+        }
+    }
+
+    public void pauseGame() {
+        backend.pause();
+    }
+
+    public void resumeGame() {
+        backend.resume();
+    }
+
+    public void saveGame() {
+        try {
+            FileOutputStream fileOutputStream = new FileOutputStream(dataSave);
+            ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
+            objectOutputStream.writeObject(backend);
+            objectOutputStream.flush();
+            objectOutputStream.close();
+            fileOutputStream.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -36,6 +101,9 @@ public class PlayScreen implements Screen {
     @Override
     public Screen respondToKeyPressed(KeyEvent key) {
         switch (key.getKeyCode()) {
+            case KeyEvent.VK_ESCAPE:
+                pauseGame();
+                return new PauseScreen(this, mainFrame);
             case KeyEvent.VK_W:
                 backend.playerStartMoving(Direction.DIR_UP);
                 break;
@@ -49,16 +117,16 @@ public class PlayScreen implements Screen {
                 backend.playerStartMoving(Direction.DIR_RIGHT);
                 break;
             case KeyEvent.VK_UP:
-                backend.playerStartAttacking(Direction.DIR_UP);
+                backend.playerStartShooting(Direction.DIR_UP);
                 break;
             case KeyEvent.VK_LEFT:
-                backend.playerStartAttacking(Direction.DIR_LEFT);
+                backend.playerStartShooting(Direction.DIR_LEFT);
                 break;
             case KeyEvent.VK_DOWN:
-                backend.playerStartAttacking(Direction.DIR_DOWN);
+                backend.playerStartShooting(Direction.DIR_DOWN);
                 break;
             case KeyEvent.VK_RIGHT:
-                backend.playerStartAttacking(Direction.DIR_RIGHT);
+                backend.playerStartShooting(Direction.DIR_RIGHT);
                 break;
         }
         return this;
@@ -66,8 +134,8 @@ public class PlayScreen implements Screen {
 
     @Override
     public Screen respondToKeyReleased(KeyEvent key) {
-        Direction currentDirection = backend.getPlayerDir();
-        Direction currentAttackingDirection = backend.getPlayerAttackDir();
+        Direction currentDirection = backend.playerDirection();
+        Direction currentAttackingDirection = backend.playerAttackDirection();
         switch (key.getKeyCode()) {
             case KeyEvent.VK_W:
                 if (currentDirection == Direction.DIR_UP)
@@ -87,19 +155,19 @@ public class PlayScreen implements Screen {
                 break;
             case KeyEvent.VK_UP:
                 if (currentAttackingDirection == Direction.DIR_UP)
-                    backend.playerStopAttacking();
+                    backend.playerStopShooting();
                 break;
             case KeyEvent.VK_LEFT:
                 if (currentAttackingDirection == Direction.DIR_LEFT)
-                    backend.playerStopAttacking();
+                    backend.playerStopShooting();
                 break;
             case KeyEvent.VK_DOWN:
                 if (currentAttackingDirection == Direction.DIR_DOWN)
-                    backend.playerStopAttacking();
+                    backend.playerStopShooting();
                 break;
             case KeyEvent.VK_RIGHT:
                 if (currentAttackingDirection == Direction.DIR_RIGHT)
-                    backend.playerStopAttacking();
+                    backend.playerStopShooting();
                 break;
         }
         return this;

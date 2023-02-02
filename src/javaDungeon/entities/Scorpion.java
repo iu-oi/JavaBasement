@@ -1,42 +1,33 @@
 package javaDungeon.entities;
 
-import javaDungeon.game.Direction;
 import javaDungeon.game.Game;
 
-class ScorpionAI implements MonsterAI {
-
-    private Player<? extends Bullet> player;
+class ScorpionAI extends MonsterAI {
 
     ScorpionAI(Player<? extends Bullet> player) {
-        this.player = player;
+        super(player);
     }
 
     @Override
-    public void calcNextDir(Monster<? extends Bullet> creature) {
-        if (player.getHealth() != 0) {
+    public void calculateNextDirection(Monster<? extends Bullet> creature) {
+        if (player.currentHealth() != 0) {
             int xPos = creature.getX();
             int yPos = creature.getY();
             int playerxPos = player.getX();
             int playeryPos = player.getY();
 
             if (xPos != playerxPos && yPos != playeryPos) {
-                creature.setDir(Direction.calcApproachDir(xPos, yPos, playerxPos, playeryPos));
+                creature.setDirection(approach(xPos, yPos, playerxPos, playeryPos));
             } else {
                 if (Math.abs(xPos - playerxPos) + Math.abs(yPos - playeryPos) < 8) {
-                    creature.setDir(Direction.calcEscapeDir(xPos, yPos, playerxPos, playeryPos));
+                    creature.setDirection(escape(xPos, yPos, playerxPos, playeryPos));
                 } else {
-                    creature.setDir(Direction.calcApproachDir(xPos, yPos, playerxPos, playeryPos));
+                    creature.setDirection(approach(xPos, yPos, playerxPos, playeryPos));
                 }
             }
         }
     }
 
-    public void calcNextBulletDir(Scorpion<? extends Bullet> creature) {
-        if (player.getHealth() != 0) {
-            creature.setAttackDir(
-                    Direction.calcApproachDir(creature.getX(), creature.getY(), player.getX(), player.getY()));
-        }
-    }
 }
 
 public class Scorpion<T extends Bullet> extends Monster<T> {
@@ -46,8 +37,14 @@ public class Scorpion<T extends Bullet> extends Monster<T> {
     }
 
     @Override
+    public void born(int x, int y) {
+        super.born(x, y);
+        startShooting();
+    }
+
+    @Override
     public void move() {
-        ((ScorpionAI) ai).calcNextBulletDir(this);
+        ((ScorpionAI) ai).calcNextShootDirection(this);
         super.move();
     }
 

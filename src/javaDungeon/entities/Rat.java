@@ -1,25 +1,18 @@
 package javaDungeon.entities;
 
-import java.util.Date;
-import java.util.Random;
-
 import javaDungeon.game.Game;
 
-class RatAI implements MonsterAI {
+class RatAI extends MonsterAI {
 
-    private static Random randomizer = new Random(new Date().getTime() / 1000);
-
-    @Override
-    public void calcNextDir(Monster<? extends Bullet> creature) {
-        creature.setDir(directions[randomizer.nextInt(directions.length)]);
+    RatAI(Player<? extends Bullet> player) {
+        super(player);
     }
-
 }
 
 public class Rat<T extends Bullet> extends Monster<T> {
 
-    Rat(Game game) {
-        super(new RatAI(), (char) 0xeb, game, 10, 5, 1, 0);
+    Rat(Game game, Player<? extends Bullet> player) {
+        super(new RatAI(player), (char) 0xeb, game, 10, 5, 1, 0);
     }
 
 }

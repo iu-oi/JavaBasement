@@ -19,27 +19,27 @@ public class Monster<T extends Bullet> extends Creature<T> {
         super(AsciiPanel.brightMagenta, glyph, game, health, speed, attackSpeed);
         this.damage = damage;
         this.ai = ai;
-        game.creatureFactory.incMonsterCount();
+    }
+
+    @Override
+    public void born(int x, int y) {
+        super.born(x, y);
+        startMoving();
     }
 
     @Override
     public void move() {
-        ai.calcNextDir(this);
+        ai.calculateNextDirection(this);
         super.move();
     }
 
     @Override
     public void see() {
         for (Direction probe : ai.directions) {
-            Thing entity = queryAdjacent(probe);
+            Thing entity = getAdjacent(probe);
             if (damage > 0 && entity instanceof Player)
                 ((Mob) entity).loseHealth(damage);
         }
     }
 
-    @Override
-    public void die() {
-        game.creatureFactory.decMonsterCount();
-        super.die();
-    }
 }

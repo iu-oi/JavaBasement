@@ -2,14 +2,14 @@ package javaDungeon.screens;
 
 import java.awt.event.KeyEvent;
 import asciiPanel.AsciiPanel;
-import javaDungeon.Dungeon;
+import javaDungeon.MainFrame;
 
 public class LoseScreen implements Screen {
 
-    private Dungeon frontend;
+    private MainFrame mainFrame;
 
-    public LoseScreen(Dungeon frontend) {
-        this.frontend = frontend;
+    LoseScreen(MainFrame mainFrame) {
+        this.mainFrame = mainFrame;
     }
 
     @Override
@@ -21,7 +21,7 @@ public class LoseScreen implements Screen {
     @Override
     public Screen respondToKeyPressed(KeyEvent key) {
         if (key.getKeyCode() == KeyEvent.VK_ENTER) {
-            return new StartScreen(frontend);
+            return new StartScreen(mainFrame);
         }
         return this;
     }

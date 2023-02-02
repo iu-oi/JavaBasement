@@ -1,20 +1,17 @@
 package javaDungeon.entities;
 
-import javaDungeon.game.Direction;
 import javaDungeon.game.Game;
 
-class SnakeAI implements MonsterAI {
-
-    private Player<? extends Bullet> player;
+class SnakeAI extends MonsterAI {
 
     SnakeAI(Player<? extends Bullet> player) {
-        this.player = player;
+        super(player);
     }
 
     @Override
-    public void calcNextDir(Monster<? extends Bullet> creature) {
-        if (player.getHealth() != 0) {
-            creature.setDir(Direction.calcApproachDir(creature.getX(), creature.getY(), player.getX(), player.getY()));
+    public void calculateNextDirection(Monster<? extends Bullet> creature) {
+        if (player.currentHealth() != 0) {
+            creature.setDirection(approach(creature.getX(), creature.getY(), player.getX(), player.getY()));
         }
     }
 }

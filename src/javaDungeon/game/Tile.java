@@ -1,32 +1,34 @@
 package javaDungeon.game;
 
-public class Tile<T extends Thing> {
+import java.io.Serializable;
 
-    private T thing;
-    private T entity;
+public class Tile<I extends Thing, E extends Thing> implements Serializable{
+
+    private I item;
+    private E entity;
     private int xPos;
     private int yPos;
 
-    public T getThing() {
-        return thing;
+    public I getItem() {
+        return item;
     }
 
-    public void setThing(T thing) {
-        this.thing = thing;
-        this.thing.setTile(this);
+    public void setItem(I item) {
+        this.item = item;
+        this.item.setTile(this);
     }
 
     public void removeThing() {
-        thing.removeTile();
-        thing = null;
+        item.removeTile();
+        item = null;
     }
 
-    public T getEntity() {
+    public E getEntity() {
         return entity;
     }
 
-    public void setEntity(T thing) {
-        this.entity = thing;
+    public void setEntity(E entity) {
+        this.entity = entity;
         this.entity.setTile(this);
     }
 
