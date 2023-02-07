@@ -3,14 +3,14 @@ package javaDungeon.screens;
 import java.awt.event.KeyEvent;
 
 import asciiPanel.AsciiPanel;
-import javaDungeon.MainFrame;
+import javaDungeon.Application;
 
 public class PauseScreen implements Screen {
 
-    private MainFrame mainFrame;
+    private Application mainFrame;
     private PlayScreen playScreen;
 
-    PauseScreen(PlayScreen playScreen, MainFrame mainFrame) {
+    PauseScreen(PlayScreen playScreen, Application mainFrame) {
         this.mainFrame = mainFrame;
         this.playScreen = playScreen;
     }

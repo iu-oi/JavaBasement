@@ -2,19 +2,19 @@ package javaDungeon.screens;
 
 import java.awt.event.KeyEvent;
 import asciiPanel.AsciiPanel;
-import javaDungeon.MainFrame;
+import javaDungeon.Application;
 
-public class LoseScreen implements Screen {
+public class WinScreen implements Screen {
 
-    private MainFrame mainFrame;
+    private Application mainFrame;
 
-    LoseScreen(MainFrame mainFrame) {
+    WinScreen(Application mainFrame) {
         this.mainFrame = mainFrame;
     }
 
     @Override
     public void displayOutput(AsciiPanel terminal) {
-        terminal.writeCenter("-- You lost --", 15);
+        terminal.writeCenter("-- You won! --", 15);
         terminal.writeCenter("Press Enter to continue", 16);
     }
 

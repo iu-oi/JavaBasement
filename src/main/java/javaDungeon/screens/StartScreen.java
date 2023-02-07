@@ -3,13 +3,13 @@ package javaDungeon.screens;
 import java.awt.event.KeyEvent;
 
 import asciiPanel.AsciiPanel;
-import javaDungeon.MainFrame;
+import javaDungeon.Application;
 
 public class StartScreen implements Screen {
 
-    private MainFrame mainFrame;
+    private Application mainFrame;
 
-    public StartScreen(MainFrame mainFrame) {
+    public StartScreen(Application mainFrame) {
         this.mainFrame = mainFrame;
     }
 

@@ -9,7 +9,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
 import asciiPanel.AsciiPanel;
-import javaDungeon.MainFrame;
+import javaDungeon.Application;
 import javaDungeon.game.Direction;
 import javaDungeon.game.Game;
 import javaDungeon.game.Thing;
@@ -18,17 +18,17 @@ import javaDungeon.game.World;
 public class PlayScreen implements Screen {
 
     private String dataSave;
-    private MainFrame mainFrame;
+    private Application mainFrame;
     private Game backend;
 
-    public PlayScreen(String dataSave, int playerId, MainFrame mainFrame) {
+    public PlayScreen(String dataSave, int playerId, Application mainFrame) {
         this.mainFrame = mainFrame;
         this.dataSave = dataSave;
         backend = new Game(this);
         playGame(playerId);
     }
 
-    public PlayScreen(String dataSave, MainFrame mainFrame) {
+    public PlayScreen(String dataSave, Application mainFrame) {
         this.mainFrame = mainFrame;
         this.dataSave = dataSave;
         try {
