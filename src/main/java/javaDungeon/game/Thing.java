@@ -7,7 +7,7 @@ public class Thing implements Serializable{
 
     private final Color color;
     private final char glyph;
-    private Tile<? extends Thing, ? extends Thing> tile;
+    private Tile tile;
 
     public int getX() {
         return this.tile.getxPos();
@@ -17,7 +17,7 @@ public class Thing implements Serializable{
         return this.tile.getyPos();
     }
 
-    public void setTile(Tile<? extends Thing, ? extends Thing> tile) {
+    public void setTile(Tile tile) {
         this.tile = tile;
     }
 

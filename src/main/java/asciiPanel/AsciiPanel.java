@@ -416,15 +416,15 @@ public class AsciiPanel extends JPanel {
         short[] g = new short[256];
         short[] b = new short[256];
 
-        byte bga = (byte) (bgColor.getAlpha());
-        byte bgr = (byte) (bgColor.getRed());
-        byte bgg = (byte) (bgColor.getGreen());
-        byte bgb = (byte) (bgColor.getBlue());
+        short bga = (short) (bgColor.getAlpha());
+        short bgr = (short) (bgColor.getRed());
+        short bgg = (short) (bgColor.getGreen());
+        short bgb = (short) (bgColor.getBlue());
 
-        byte fga = (byte) (fgColor.getAlpha());
-        byte fgr = (byte) (fgColor.getRed());
-        byte fgg = (byte) (fgColor.getGreen());
-        byte fgb = (byte) (fgColor.getBlue());
+        short fga = (short) (fgColor.getAlpha());
+        short fgr = (short) (fgColor.getRed());
+        short fgg = (short) (fgColor.getGreen());
+        short fgb = (short) (fgColor.getBlue());
 
         for (int i = 0; i < 256; i++) {
             if (i == 0) {
@@ -434,9 +434,10 @@ public class AsciiPanel extends JPanel {
                 b[i] = bgb;
             } else {
                 a[i] = fga;
-                r[i] = fgr;
-                g[i] = fgg;
-                b[i] = fgb;
+                /* multiply algorithm */
+                r[i] = (short) Math.sqrt(fgr * i);
+                g[i] = (short) Math.sqrt(fgg * i);
+                b[i] = (short) Math.sqrt(fgb * i);
             }
         }
 

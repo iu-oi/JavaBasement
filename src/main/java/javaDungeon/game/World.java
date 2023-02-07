@@ -2,21 +2,21 @@ package javaDungeon.game;
 
 import java.io.Serializable;
 
-import javaDungeon.blocks.Floor;
+import javaDungeon.game.floor.Mosaic;
 
-public class World implements Serializable{
+public class World implements Serializable {
 
     public static final int WIDTH = 33;
     public static final int HEIGHT = 34;
 
-    private Tile<Thing, Thing>[][] tiles;
+    private Tile[][] tiles;
 
     public World() {
         tiles = new Tile[WIDTH][HEIGHT];
         for (int i = 0; i < WIDTH; i++) {
             for (int j = 0; j < HEIGHT; j++) {
-                tiles[i][j] = new Tile<>(i, j);
-                tiles[i][j].setItem(new Floor());
+                tiles[i][j] = new Tile(i, j);
+                tiles[i][j].setItem(new Mosaic());
             }
         }
     }

@@ -8,21 +8,19 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
-import javaDungeon.blocks.BottomLeftCorner;
-import javaDungeon.blocks.BottomRightCorner;
-import javaDungeon.blocks.Empty;
-import javaDungeon.blocks.HorizontalWall;
-import javaDungeon.blocks.TopLeftCorner;
-import javaDungeon.blocks.TopRightCorner;
-import javaDungeon.blocks.VerticalWall;
-import javaDungeon.entities.Bullet;
-import javaDungeon.entities.Creature;
-import javaDungeon.entities.CreatureFactory;
-import javaDungeon.entities.Diamond;
-import javaDungeon.entities.Heart;
-import javaDungeon.entities.Mob;
-import javaDungeon.entities.Monster;
-import javaDungeon.entities.Player;
+import javaDungeon.Empty;
+import javaDungeon.game.mob.Mob;
+import javaDungeon.game.mob.bullet.Bullet;
+import javaDungeon.game.mob.creature.Creature;
+import javaDungeon.game.mob.creature.CreatureFactory;
+import javaDungeon.game.mob.creature.monster.Monster;
+import javaDungeon.game.mob.creature.player.Player;
+import javaDungeon.game.wall.BottomLeftCorner;
+import javaDungeon.game.wall.BottomRightCorner;
+import javaDungeon.game.wall.HorizontalWall;
+import javaDungeon.game.wall.TopLeftCorner;
+import javaDungeon.game.wall.TopRightCorner;
+import javaDungeon.game.wall.VerticalWall;
 import javaDungeon.screens.PlayScreen;
 
 public class Game implements Runnable, Serializable {

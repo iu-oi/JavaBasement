@@ -4,6 +4,14 @@ import java.awt.event.KeyEvent;
 
 import asciiPanel.AsciiPanel;
 import javaDungeon.Application;
+import javaDungeon.game.mob.creature.player.Player;
+import javaDungeon.game.mob.creature.player.Player1;
+import javaDungeon.game.mob.creature.player.Player2;
+import javaDungeon.game.mob.creature.player.Player3;
+import javaDungeon.game.mob.creature.player.Player4;
+import javaDungeon.game.mob.creature.player.Player5;
+import javaDungeon.game.mob.creature.player.Player6;
+import javaDungeon.game.mob.creature.player.Player7;
 
 public class StartScreen implements Screen {
 
@@ -17,13 +25,13 @@ public class StartScreen implements Screen {
     public void displayOutput(AsciiPanel terminal) {
         terminal.writeCenter("-- Java Dungeon --", 15);
         terminal.writeCenter("Choose your character", 16);
-        terminal.write((char) 0x2, 10, 17, AsciiPanel.red);
-        terminal.write((char) 0x2, 12, 17, AsciiPanel.yellow);
-        terminal.write((char) 0x2, 14, 17, AsciiPanel.brightYellow);
-        terminal.write((char) 0x2, 16, 17, AsciiPanel.green);
-        terminal.write((char) 0x2, 18, 17, AsciiPanel.cyan);
-        terminal.write((char) 0x2, 20, 17, AsciiPanel.brightBlue);
-        terminal.write((char) 0x2, 22, 17, AsciiPanel.blue);
+        terminal.write(Player.GLYPH, 10, 17, Player1.COLOR);
+        terminal.write(Player.GLYPH, 12, 17, Player2.COLOR);
+        terminal.write(Player.GLYPH, 14, 17, Player3.COLOR);
+        terminal.write(Player.GLYPH, 16, 17, Player4.COLOR);
+        terminal.write(Player.GLYPH, 18, 17, Player5.COLOR);
+        terminal.write(Player.GLYPH, 20, 17, Player6.COLOR);
+        terminal.write(Player.GLYPH, 22, 17, Player7.COLOR);
         terminal.writeCenter("1 2 3 4 5 6 7", 18);
         terminal.writeCenter("0 Load(You must save first)", 19);
     }

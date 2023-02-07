@@ -2,18 +2,18 @@ package javaDungeon.game;
 
 import java.io.Serializable;
 
-public class Tile<I extends Thing, E extends Thing> implements Serializable{
+public class Tile implements Serializable {
 
-    private I item;
-    private E entity;
+    private Thing item;
+    private Thing entity;
     private int xPos;
     private int yPos;
 
-    public I getItem() {
+    public Thing getItem() {
         return item;
     }
 
-    public void setItem(I item) {
+    public void setItem(Thing item) {
         this.item = item;
         this.item.setTile(this);
     }
@@ -23,11 +23,11 @@ public class Tile<I extends Thing, E extends Thing> implements Serializable{
         item = null;
     }
 
-    public E getEntity() {
+    public Thing getEntity() {
         return entity;
     }
 
-    public void setEntity(E entity) {
+    public void setEntity(Thing entity) {
         this.entity = entity;
         this.entity.setTile(this);
     }
