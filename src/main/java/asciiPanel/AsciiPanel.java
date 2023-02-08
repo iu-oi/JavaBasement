@@ -434,10 +434,10 @@ public class AsciiPanel extends JPanel {
                 b[i] = bgb;
             } else {
                 a[i] = fga;
-                /* multiply algorithm */
-                r[i] = (short) Math.sqrt(fgr * i);
-                g[i] = (short) Math.sqrt(fgg * i);
-                b[i] = (short) Math.sqrt(fgb * i);
+                double j = (double) i / (double) 255;
+                r[i] = (short) ((double) fgr * j);
+                g[i] = (short) ((double) fgg * j);
+                b[i] = (short) ((double) fgb * j);
             }
         }
 

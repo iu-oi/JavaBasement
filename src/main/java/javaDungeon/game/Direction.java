@@ -2,62 +2,62 @@ package javaDungeon.game;
 
 public enum Direction {
 
-    DIR_UP {
-        public int getxDir() {
+    UP {
+        public int diffX() {
             return 0;
         }
 
-        public int getyDir() {
+        public int diffY() {
             return -1;
         }
 
         public Direction opposite() {
-            return DIR_DOWN;
+            return DOWN;
         }
     },
-    DIR_LEFT {
-        public int getxDir() {
+    LEFT {
+        public int diffX() {
             return -1;
         }
 
-        public int getyDir() {
+        public int diffY() {
             return 0;
         }
 
         public Direction opposite() {
-            return DIR_RIGHT;
+            return RIGHT;
         }
     },
-    DIR_DOWN {
-        public int getxDir() {
+    DOWN {
+        public int diffX() {
             return 0;
         }
 
-        public int getyDir() {
+        public int diffY() {
             return 1;
         }
 
         public Direction opposite() {
-            return DIR_UP;
+            return UP;
         }
     },
-    DIR_RIGHT {
-        public int getxDir() {
+    RIGHT {
+        public int diffX() {
             return 1;
         }
 
-        public int getyDir() {
+        public int diffY() {
             return 0;
         }
 
         public Direction opposite() {
-            return DIR_LEFT;
+            return LEFT;
         }
     };
 
-    public abstract int getxDir();
+    public abstract int diffX();
 
-    public abstract int getyDir();
+    public abstract int diffY();
 
     public abstract Direction opposite();
 

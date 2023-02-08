@@ -5,8 +5,17 @@ import java.io.Serializable;
 
 public class Thing implements Serializable{
 
-    private final Color color;
-    private final char glyph;
+    protected final Color color;
+    protected final char glyph;
+
+    public Color getColor() {
+        return this.color;
+    }
+
+    public char getGlyph() {
+        return this.glyph;
+    }
+
     private Tile tile;
 
     public int getX() {
@@ -28,14 +37,6 @@ public class Thing implements Serializable{
     public Thing(Color color, char glyph) {
         this.color = color;
         this.glyph = glyph;
-    }
-
-    public Color getColor() {
-        return this.color;
-    }
-
-    public char getGlyph() {
-        return this.glyph;
     }
 
 }

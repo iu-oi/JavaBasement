@@ -4,37 +4,37 @@ import java.io.Serializable;
 
 public class Tile implements Serializable {
 
-    private Thing item;
-    private Thing entity;
+    private Thing background;
+    private Thing foreground;
     private int xPos;
     private int yPos;
 
-    public Thing getItem() {
-        return item;
+    public Thing getBackground() {
+        return background;
     }
 
-    public void setItem(Thing item) {
-        this.item = item;
-        this.item.setTile(this);
+    public void setBackground(Thing t) {
+        this.background = t;
+        this.background.setTile(this);
     }
 
-    public void removeThing() {
-        item.removeTile();
-        item = null;
+    public void removeBackground() {
+        background.removeTile();
+        background = null;
     }
 
-    public Thing getEntity() {
-        return entity;
+    public Thing getForeground() {
+        return foreground;
     }
 
-    public void setEntity(Thing entity) {
-        this.entity = entity;
-        this.entity.setTile(this);
+    public void setForeground(Thing t) {
+        this.foreground = t;
+        this.foreground.setTile(this);
     }
 
-    public void removeEntity() {
-        entity.removeTile();
-        entity = null;
+    public void removeForeground() {
+        foreground.removeTile();
+        foreground = null;
     }
 
     public int getxPos() {
