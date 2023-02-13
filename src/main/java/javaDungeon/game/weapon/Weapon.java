@@ -1,10 +1,11 @@
 package javaDungeon.game.weapon;
 
 import java.awt.Color;
+import java.io.Serializable;
 
 import javaDungeon.game.*;
 
-public abstract class Weapon {
+public abstract class Weapon implements Serializable {
 
     protected World world;
 
@@ -16,6 +17,6 @@ public abstract class Weapon {
 
     public abstract char getGlyph();
 
-    public abstract void rangedAttack(Color color, int xPos, int yPos, Direction direction);
+    public abstract void rangedAttack(Color color, int x, int y, Direction direction);
 
 }

@@ -4,14 +4,15 @@ import java.awt.event.KeyEvent;
 import java.awt.Color;
 
 import javaDungeon.game.*;
-import javaDungeon.game.behavior.Ranged;
+import javaDungeon.game.behavior.*;
+import javaDungeon.game.entity.Entity;
 import javaDungeon.game.entity.creature.Creature;
 import javaDungeon.game.weapon.Weapon;
 
 public abstract class Player<W extends Weapon> extends Creature implements Ranged {
 
     public static final int INVISIBLE_INTERVAL = 10;
-    public static final char GLYPH = (char) 0x2;
+    public static final char GLYPH = (char) 0x40;
 
     protected final int rangedAttackInterval;
     protected int lastRangedAttackFrame = 0;
@@ -40,14 +41,26 @@ public abstract class Player<W extends Weapon> extends Creature implements Range
     }
 
     @Override
-    public boolean takeDamage(int damage, int frame) {
-        if (frame - lastHitFrame >= INVISIBLE_INTERVAL) {
-            if (super.takeDamage(damage, frame)) {
-                lastHitFrame = frame;
-                return true;
-            } else {
-                return false;
+    public int detectDamage() {
+        int damageTaken = 0;
+        for (Direction probe : Direction.values()) {
+            Thing front = world.getForeground(this, probe);
+            if (front instanceof Entity && front instanceof Aggressive) {
+                int damage = ((Aggressive) front).getDamage(this);
+                if (damage > damageTaken) {
+                    damageTaken = damage;
+                }
             }
+        }
+        return damageTaken;
+    }
+
+    @Override
+    public boolean takeDamage(int damage, int frame) {
+        if (damage > 0 && frame - lastHitFrame >= INVISIBLE_INTERVAL) {
+            lastHitFrame = frame;
+            changeCurrentHealth(-damage);
+            return true;
         } else {
             return false;
         }
@@ -72,12 +85,12 @@ public abstract class Player<W extends Weapon> extends Creature implements Range
     @Override
     public boolean takeStep(Direction direction, int frame) {
         if (direction != null && (direction != lastStepDirection ||
-                frame == 1 || frame - lastStepFrame >= stepInterval)) {
+                lastStepFrame == 0 || frame - lastStepFrame >= stepInterval)) {
             lastStepFrame = frame;
             lastStepDirection = direction;
-            int newX = getX() + direction.diffX();
-            int newY = getY() + direction.diffY();
-            world.removeForeground(getX(), getY());
+            int x = getX(), y = getY();
+            int newX = x + direction.diffX(), newY = y + direction.diffY();
+            world.removeForeground(x, y);
             world.putForeground(this, newX, newY);
             return true;
         } else {
@@ -97,7 +110,7 @@ public abstract class Player<W extends Weapon> extends Creature implements Range
 
     @Override
     public boolean rangedAttack(Direction direction, int frame) {
-        if (direction != null && (direction != lastRangedAttackDirection || frame == 1
+        if (direction != null && (direction != lastRangedAttackDirection || lastRangedAttackFrame == 0
                 || frame - lastRangedAttackFrame >= rangedAttackInterval)) {
             lastRangedAttackFrame = frame;
             lastRangedAttackDirection = direction;
@@ -108,8 +121,7 @@ public abstract class Player<W extends Weapon> extends Creature implements Range
         }
     }
 
-    public void keyPressed(KeyEvent key) {
-        int keyCode = key.getKeyCode();
+    public void keyPressed(int keyCode) {
         Direction stepRequest = null;
         Direction rangedAttackRequest = null;
         if (keyCode == KeyEvent.VK_W) {
@@ -137,8 +149,7 @@ public abstract class Player<W extends Weapon> extends Creature implements Range
         }
     }
 
-    public void keyReleased(KeyEvent key) {
-        int keyCode = key.getKeyCode();
+    public void keyReleased(int keyCode) {
         Direction stepRequest = null;
         Direction rangedAttackRequest = null;
         if (keyCode == KeyEvent.VK_W) {

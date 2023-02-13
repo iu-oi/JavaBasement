@@ -3,45 +3,53 @@ package javaDungeon.screen;
 import java.awt.event.KeyEvent;
 
 import asciiPanel.AsciiPanel;
+import javaDungeon.event.Quit;
 import javaDungeon.game.entity.creature.player.*;
 
-public class StartScreen implements Screen {
+public class StartScreen extends Screen {
 
-    @Override
-    public void refresh(AsciiPanel terminal) {
-        terminal.writeCenter("-- Java Dungeon --", 15);
-        terminal.writeCenter("Choose your character", 16);
-        terminal.write(Player.GLYPH, 10, 17, Player1.COLOR);
-        terminal.write(Player.GLYPH, 12, 17, Player2.COLOR);
-        terminal.write(Player.GLYPH, 14, 17, Player3.COLOR);
-        terminal.write(Player.GLYPH, 16, 17, Player4.COLOR);
-        terminal.write(Player.GLYPH, 18, 17, Player5.COLOR);
-        terminal.write(Player.GLYPH, 20, 17, Player6.COLOR);
-        terminal.write(Player.GLYPH, 22, 17, Player7.COLOR);
-        terminal.writeCenter("1 2 3 4 5 6 7", 18);
-        terminal.writeCenter("0 Load(You must save first)", 19);
+    public StartScreen(AsciiPanel mainPanel, AsciiPanel subPanel) {
+        super(mainPanel, subPanel);
+        addBar(Player.GLYPH, Player1.COLOR, "Player1", 1);
+        addBar(Player.GLYPH, Player2.COLOR, "Player2", 2);
+        addBar(Player.GLYPH, Player3.COLOR, "Player3", 3);
+        addBar(Player.GLYPH, Player4.COLOR, "Player4", 4);
+        addBar(Player.GLYPH, Player5.COLOR, "Player5", 5);
+        addBar(Player.GLYPH, Player6.COLOR, "Player6", 6);
+        addBar(Player.GLYPH, Player7.COLOR, "Player7", 7);
+        addBar(LOAD, Screen.ACTIVE_OPTION_COLOR, "load", 0);
+        addBar(QUIT, Screen.ACTIVE_OPTION_COLOR, "quit", -1);
     }
 
     @Override
-    public Screen keyPressed(KeyEvent key) {
+    public void refresh() {
+        displayTitle("Java Dungeon");
+        displayOptions();
+    }
+
+    @Override
+    public Screen keyPressed(int keyCode) {
+        if (keyCode == KeyEvent.VK_UP) {
+            selectPreviousBar();
+        } else if (keyCode == KeyEvent.VK_DOWN) {
+            selectNextBar();
+        }
         return this;
     }
 
     @Override
-    public Screen keyReleased(KeyEvent key) {
-        switch (key.getKeyCode()) {
-            case KeyEvent.VK_0:
-                return new PlayScreen();
-            case KeyEvent.VK_1:
-            case KeyEvent.VK_2:
-            case KeyEvent.VK_3:
-            case KeyEvent.VK_4:
-            case KeyEvent.VK_5:
-            case KeyEvent.VK_6:
-            case KeyEvent.VK_7:
-                return new PlayScreen(key.getKeyCode() - KeyEvent.VK_0);
-            default:
-                return this;
+    public Screen keyReleased(int keyCode) throws Quit {
+        if (keyCode == KeyEvent.VK_ENTER) {
+            int value = getSelection().getValue();
+            if (value == -1) {
+                throw new Quit();
+            } else if (value == 0) {
+                return new PlayScreen(mainPaniel, subPanel);
+            } else if (value >= 1 && value <= 7) {
+                return new PlayScreen(value, mainPaniel, subPanel);
+            }
         }
+        return this;
     }
+
 }

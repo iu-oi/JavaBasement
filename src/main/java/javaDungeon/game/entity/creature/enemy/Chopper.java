@@ -8,12 +8,12 @@ import javaDungeon.game.weapon.Axe;
 
 public class Chopper extends RangedEnemy<Axe> {
 
-    public static final Color COLOR = new Color(0, 255, 0);
+    public static final Color COLOR = Color.green;
     public static final char GLYPH = (char) 0x8f;
     public static final int HEALTH = 20;
     public static final int STEP_INTERVAL = 1000;
     public static final int DAMAGE = 1;
-    public static final int RANGED_ATTACK_INTERVAL = 5;
+    public static final int RANGED_ATTACK_INTERVAL = 20;
 
     protected Creature creatureTracked;
 
@@ -30,8 +30,8 @@ public class Chopper extends RangedEnemy<Axe> {
     @Override
     public Direction nextRangedAttack() {
         Direction result = null;
-        int diffX = this.getX() - creatureTracked.getX();
-        int diffY = this.getY() - creatureTracked.getY();
+        int diffX = getX() - creatureTracked.getX();
+        int diffY = getY() - creatureTracked.getY();
         if (diffY == 0) {
             if (diffX > 0) {
                 result = Direction.LEFT;

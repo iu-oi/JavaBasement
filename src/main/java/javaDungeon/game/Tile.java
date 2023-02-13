@@ -6,8 +6,8 @@ public class Tile implements Serializable {
 
     private Thing background;
     private Thing foreground;
-    private int xPos;
-    private int yPos;
+    private int x;
+    private int y;
 
     public Thing getBackground() {
         return background;
@@ -37,30 +37,30 @@ public class Tile implements Serializable {
         foreground = null;
     }
 
-    public int getxPos() {
-        return xPos;
+    public int getX() {
+        return x;
     }
 
-    public void setxPos(int xPos) {
-        this.xPos = xPos;
+    public void setX(int x) {
+        this.x = x;
     }
 
-    public int getyPos() {
-        return yPos;
+    public int getY() {
+        return y;
     }
 
-    public void setyPos(int yPos) {
-        this.yPos = yPos;
+    public void setY(int y) {
+        this.y = y;
     }
 
     public Tile() {
-        this.xPos = -1;
-        this.yPos = -1;
+        this.x = -1;
+        this.y = -1;
     }
 
-    public Tile(int xPos, int yPos) {
-        this.xPos = xPos;
-        this.yPos = yPos;
+    public Tile(int x, int y) {
+        this.x = x;
+        this.y = y;
     }
 
 }

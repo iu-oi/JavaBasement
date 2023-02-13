@@ -22,9 +22,9 @@ public class GrenadeLauncher extends Weapon {
     }
 
     @Override
-    public void rangedAttack(Color color, int xPos, int yPos, Direction direction) {
-        int newX = xPos + direction.diffX();
-        int newY = yPos + direction.diffY();
+    public void rangedAttack(Color color, int x, int y, Direction direction) {
+        int newX = x + direction.diffX();
+        int newY = y + direction.diffY();
         if (world.testForeground(newX, newY)) {
             world.newEntity(new Grenade(color, world, direction), newX, newY);
         }

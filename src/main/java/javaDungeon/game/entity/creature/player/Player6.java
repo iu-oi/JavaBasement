@@ -7,7 +7,7 @@ import javaDungeon.game.weapon.Guitar;
 
 public class Player6 extends Player<Guitar> {
 
-    public static final Color COLOR = new Color(0, 0, 255);
+    public static final Color COLOR = Color.MAGENTA;
     public static final int HEALTH = 3;
     public static final int STEP_INTERVAL = 5;
     public static final int RANGED_ATTACK_INTERVAL = 6;

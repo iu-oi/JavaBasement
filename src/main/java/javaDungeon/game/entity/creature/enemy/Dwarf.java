@@ -7,7 +7,7 @@ import javaDungeon.game.entity.creature.Creature;
 
 public class Dwarf extends Enemy {
 
-    public static final Color COLOR = new Color(255, 0, 0);
+    public static final Color COLOR = Color.orange;
     public static final char GLYPH = (char) 0x91;
     public static final int HEALTH = 100;
     public static final int STEP_INTERVAL = 8;
@@ -24,9 +24,9 @@ public class Dwarf extends Enemy {
     public Direction nextStep() {
         Direction result = null;
         int currentMaxWeight = -1;
-        int diffX = this.getX() - creatureTracked.getX();
-        int diffY = this.getY() - creatureTracked.getY();
-        if (Math.abs(diffX) == 1 || Math.abs(diffY) == 1) {
+        int diffX = getX() - creatureTracked.getX();
+        int diffY = getY() - creatureTracked.getY();
+        if (Math.abs(diffX) + Math.abs(diffY) == 1) {
             return null;
         }
         for (Direction probe : Direction.values()) {

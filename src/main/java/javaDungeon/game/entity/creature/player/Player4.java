@@ -7,7 +7,7 @@ import javaDungeon.game.weapon.Axe;
 
 public class Player4 extends Player<Axe> {
 
-    public static final Color COLOR = new Color(0, 255, 0);
+    public static final Color COLOR = Color.green;
     public static final int HEALTH = 4;
     public static final int STEP_INTERVAL = 5;
     public static final int RANGED_ATTACK_INTERVAL = 3;

@@ -1,16 +1,15 @@
 package javaDungeon.game;
 
-import java.awt.event.KeyEvent;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Set;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.List;
 
 import javaDungeon.event.*;
-import javaDungeon.game.behavior.*;
 import javaDungeon.game.entity.Entity;
-import javaDungeon.game.entity.creature.Creature;
+import javaDungeon.game.entity.Bullet.Bullet;
 import javaDungeon.game.entity.creature.enemy.*;
 import javaDungeon.game.entity.creature.player.*;
 import javaDungeon.game.floor.*;
@@ -19,20 +18,22 @@ import javaDungeon.game.weapon.Weapon;
 
 public class World implements Serializable {
 
-    public static final int WIDTH = 32;
-    public static final int HEIGHT = 32;
+    public static final String DATA_SAVE = "world.db";
+    public static final int WIDTH = 16;
+    public static final int HEIGHT = 16;
 
     public void consoleLog(Object sender, String message) {
-        System.out.println(String.format("Log (%s) ", new Date())
-                + String.format("%s@%x", sender.getClass().getSimpleName(), sender.hashCode())
-                + String.format(": %s (%d)", message, currentFrame));
+        System.out.println(String.format("Log (%s) %s@%x: %s (%d)",
+                new Date(), sender.getClass().getSimpleName(), sender.hashCode(), message, currentFrame));
     }
 
     private Tile[][] tiles;
-    private Set<Entity> entities;
     private Player<? extends Weapon> player;
+    private Set<Enemy> enemies;
+    private transient List<Enemy> obsoleteEnemies;
+    private Set<Bullet> bullets;
+    private transient List<Bullet> obsoleteBullets;
     private int currentFrame = 0;
-    private int enemyCount = 0;
 
     public World() {
         tiles = new Tile[WIDTH][HEIGHT];
@@ -99,30 +100,38 @@ public class World implements Serializable {
     }
 
     public void newEntity(Entity entity, int x, int y) {
-        if (entity instanceof Creature) {
-            consoleLog(entity, String.format("Creature created at (%d, %d).", x, y));
-            if (entity instanceof Enemy) {
-                enemyCount++;
-            }
+        if (entity instanceof Enemy) {
+            consoleLog(entity, String.format("Enemy created at (%d, %d).", x, y));
+            enemies.add((Enemy) entity);
+        } else if (entity instanceof Player) {
+            consoleLog(entity, String.format("Player created at (%d, %d).", x, y));
+            player = (Player<?>) entity;
+        } else if (entity instanceof Bullet) {
+            bullets.add((Bullet) entity);
         }
-        entities.add(entity);
         putForeground(entity, x, y);
     }
 
     public void removeEntity(Entity entity) {
-        if (entity instanceof Creature) {
-            consoleLog(entity, String.format("Creature died at (%d, %d).", entity.getX(), entity.getY()));
-            if (entity instanceof Enemy) {
-                enemyCount--;
-            }
+        int x = entity.getX();
+        int y = entity.getY();
+        if (entity instanceof Enemy) {
+            consoleLog(entity, String.format("Enemy died at (%d, %d).", x, y));
+            enemies.remove((Enemy) entity);
+        } else if (entity instanceof Player) {
+            consoleLog(entity, String.format("Player died at (%d, %d).", x, y));
+        } else if (entity instanceof Bullet) {
+            bullets.remove((Bullet) entity);
         }
-        entities.remove(entity);
-        removeForeground(entity.getX(), entity.getY());
+        removeForeground(x, y);
     }
 
     public void newFrame() throws Defeat, Victory {
         currentFrame++;
         if (currentFrame == 1) {
+            enemies = new HashSet<>();
+            bullets = new HashSet<>();
+
             for (int i = 0; i < WIDTH; i++) {
                 for (int j = 0; j < HEIGHT; j++) {
                     putBackground(new Mosaic(), i, j);
@@ -140,50 +149,72 @@ public class World implements Serializable {
             putForeground(new TopRightCorner(), World.WIDTH - 1, 0);
             putForeground(new BottomLeftCorner(), 0, World.HEIGHT - 1);
             putForeground(new BottomRightCorner(), World.WIDTH - 1, World.HEIGHT - 1);
-            entities = new HashSet<>();
+
             newEntity(player, 1, 1);
-            newEntity(new Dwarf(this, player), 10, 10);
-            newEntity(new Dwarf(this, player), 20, 20);
-            newEntity(new Crab(this, player), 30, 30);
+            newEntity(new Dwarf(this, player), 11, 11);
+            newEntity(new Chopper(this, player), 12, 12);
+            newEntity(new Rat(this), 13, 13);
+            newEntity(new Crab(this, player), 14, 14);
+
             consoleLog(this, "Game started.");
         } else {
-            for (Entity entity : new LinkedList<>(entities)) {
-                if (entity instanceof Passive) {
-                    ((Passive) entity).takeDamage(((Passive) entity).detectDamage(), currentFrame);
-                }
+            obsoleteBullets = new LinkedList<>();
+            obsoleteEnemies = new LinkedList<>();
+
+            for (Bullet bullet : bullets) {
+                bullet.takeStep(bullet.nextStep(), currentFrame);
             }
-            for (Entity entity : new LinkedList<>(entities)) {
-                if (entity.isObsolete()) {
-                    removeEntity(entity);
-                }
-            }
+            player.takeDamage(player.detectDamage(), currentFrame);
             if (player.isObsolete()) {
                 consoleLog(this, "Game ended. You lost!");
                 throw new Defeat();
             }
-            if (enemyCount == 0) {
-                consoleLog(this, "Game ended. You win!");
+            for (Enemy enemy : enemies) {
+                enemy.takeDamage(enemy.detectDamage(), currentFrame);
+            }
+
+            for (Bullet bullet : bullets) {
+                if (bullet.isObsolete()) {
+                    obsoleteBullets.add(bullet);
+                }
+            }
+            for (Enemy enemy : enemies) {
+                if (enemy.isObsolete()) {
+                    obsoleteEnemies.add(enemy);
+                }
+            }
+
+            for (Bullet bullet : obsoleteBullets) {
+                removeEntity(bullet);
+            }
+            for (Enemy enemy : obsoleteEnemies) {
+                removeEntity(enemy);
+            }
+            if (enemies.isEmpty()) {
+                consoleLog(this, "Game ended. You won!");
                 throw new Victory();
             }
-            for (Entity entity : new LinkedList<>(entities)) {
-                if (entity instanceof Ranged) {
-                    ((Ranged) entity).rangedAttack(((Ranged) entity).nextRangedAttack(), currentFrame);
+
+            player.rangedAttack(player.nextRangedAttack(), currentFrame);
+            for (Enemy enemy : enemies) {
+                if (enemy instanceof RangedEnemy) {
+                    ((RangedEnemy<?>) enemy).rangedAttack(((RangedEnemy<?>) enemy).nextRangedAttack(), currentFrame);
                 }
             }
-            for (Entity entity : new LinkedList<>(entities)) {
-                if (entity instanceof Mobile) {
-                    ((Mobile) entity).takeStep(((Mobile) entity).nextStep(), currentFrame);
-                }
+
+            player.takeStep(player.nextStep(), currentFrame);
+            for (Enemy enemy : enemies) {
+                enemy.takeStep(enemy.nextStep(), currentFrame);
             }
         }
     }
 
-    public void keyPressed(KeyEvent key) {
-        player.keyPressed(key);
+    public void keyPressed(int keyCode) {
+        player.keyPressed(keyCode);
     }
 
-    public void keyReleased(KeyEvent key) {
-        player.keyReleased(key);
+    public void keyReleased(int keyCode) {
+        player.keyReleased(keyCode);
     }
 
 }

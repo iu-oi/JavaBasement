@@ -6,7 +6,7 @@ import javaDungeon.game.Thing;
 
 public abstract class Floor extends Thing {
 
-    public static final Color COLOR = new Color(64, 64, 64);
+    public static final Color COLOR = Color.darkGray;
 
     Floor(char glyph) {
         super(COLOR, glyph);

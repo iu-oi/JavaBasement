@@ -12,6 +12,14 @@ public abstract class RangedEnemy<W extends Weapon> extends Enemy implements Ran
     protected int lastRangedAttackFrame = 0;
     protected W weapon;
 
+    public W getWeapon() {
+        return weapon;
+    }
+
+    public void setWeapon(W weapon) {
+        this.weapon = weapon;
+    }
+
     RangedEnemy(Color color, char glyph, World world, int health, int stepInterval, int damage,
             int rangedAttackInterval, W weapon) {
         super(color, glyph, world, health, stepInterval, damage);
@@ -24,7 +32,8 @@ public abstract class RangedEnemy<W extends Weapon> extends Enemy implements Ran
 
     @Override
     public boolean rangedAttack(Direction direction, int frame) {
-        if (direction != null && (frame == 1 || frame - lastRangedAttackFrame >= rangedAttackInterval)) {
+        if (direction != null && (lastRangedAttackFrame == 0 ||
+                frame - lastRangedAttackFrame >= rangedAttackInterval)) {
             lastRangedAttackFrame = frame;
             weapon.rangedAttack(color, getX(), getY(), direction);
             return true;

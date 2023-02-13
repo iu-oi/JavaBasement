@@ -3,26 +3,38 @@ package javaDungeon.screen;
 import java.awt.event.KeyEvent;
 import asciiPanel.AsciiPanel;
 
-public class WinScreen implements Screen {
+public class WinScreen extends Screen {
 
-    @Override
-    public void refresh(AsciiPanel terminal) {
-        terminal.writeCenter("-- You won! --", 15);
-        terminal.writeCenter("Press Enter to continue", 16);
+    public WinScreen(AsciiPanel mainPanel, AsciiPanel subPanel) {
+        super(mainPanel, subPanel);
+        addBar(QUIT, Screen.ACTIVE_OPTION_COLOR, "menu", -1);
     }
 
     @Override
-    public Screen keyPressed(KeyEvent key) {
+    public void refresh() {
+        displayTitle("You won!");
+        displayOptions();
+    }
+
+    @Override
+    public Screen keyPressed(int keyCode) {
+        if (keyCode == KeyEvent.VK_UP) {
+            selectPreviousBar();
+        } else if (keyCode == KeyEvent.VK_DOWN) {
+            selectNextBar();
+        }
         return this;
     }
 
     @Override
-    public Screen keyReleased(KeyEvent key) {
-        if (key.getKeyCode() == KeyEvent.VK_ENTER) {
-            return new StartScreen();
-        } else {
-            return this;
+    public Screen keyReleased(int keyCode) {
+        if (keyCode == KeyEvent.VK_ENTER) {
+            int value = getSelection().getValue();
+            if (value == -1) {
+                return new StartScreen(mainPaniel, subPanel);
+            }
         }
+        return this;
     }
 
 }

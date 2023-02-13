@@ -4,8 +4,8 @@ import javaDungeon.game.Direction;
 
 public interface Mobile {
 
-    public Direction nextStep();
+    Direction nextStep();
 
-    public boolean takeStep(Direction direction, int frame);
+    boolean takeStep(Direction direction, int frame);
 
 }

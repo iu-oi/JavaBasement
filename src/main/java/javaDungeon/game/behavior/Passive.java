@@ -2,8 +2,8 @@ package javaDungeon.game.behavior;
 
 public interface Passive {
 
-    public int detectDamage();
+    int detectDamage();
 
-    public boolean takeDamage(int damage, int frame);
+    boolean takeDamage(int damage, int frame);
 
 }

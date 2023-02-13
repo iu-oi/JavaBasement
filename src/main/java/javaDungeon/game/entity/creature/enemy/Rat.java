@@ -8,7 +8,7 @@ import javaDungeon.game.*;
 
 public class Rat extends Enemy {
 
-    public static final Color COLOR = new Color(192, 192, 192);
+    public static final Color COLOR = Color.gray;
     public static final char GLYPH = (char) 0xf9;
     public static final int HEALTH = 10;
     public static final int STEP_INTERVAL = 10;

@@ -14,7 +14,7 @@ public abstract class Bullet extends Entity implements Mobile, Aggressive {
     protected final Direction direction;
 
     @Override
-    public int getDamage(Entity victim) {
+    public int getDamage(Passive victim) {
         if (world.getForeground(this, direction) == victim) {
             return damage;
         } else {
@@ -22,7 +22,7 @@ public abstract class Bullet extends Entity implements Mobile, Aggressive {
         }
     }
 
-    public Bullet(Color color, char glyph, World world, int stepInterval, int damage, Direction direction) {
+    Bullet(Color color, char glyph, World world, int stepInterval, int damage, Direction direction) {
         super(color, glyph, world);
         this.damage = damage;
         this.stepInterval = stepInterval;
@@ -31,11 +31,7 @@ public abstract class Bullet extends Entity implements Mobile, Aggressive {
 
     @Override
     public boolean isObsolete() {
-        if (!world.testForeground(this, direction)) {
-            return true;
-        } else {
-            return false;
-        }
+        return !world.testForeground(this, direction);
     }
 
     @Override
@@ -49,11 +45,11 @@ public abstract class Bullet extends Entity implements Mobile, Aggressive {
 
     @Override
     public boolean takeStep(Direction direction, int frame) {
-        if (direction != null && (frame == 1 || frame - lastStepFrame >= stepInterval)) {
+        if (direction != null && (lastStepFrame == 0 || frame - lastStepFrame >= stepInterval)) {
             lastStepFrame = frame;
-            int newX = getX() + direction.diffX();
-            int newY = getY() + direction.diffY();
-            world.removeForeground(getX(), getY());
+            int x = getX(), y = getY();
+            int newX = x + direction.diffX(), newY = y + direction.diffY();
+            world.removeForeground(x, y);
             world.putForeground(this, newX, newY);
             return true;
         } else {

@@ -24,7 +24,7 @@ public abstract class Creature extends Entity implements Mobile, Passive {
         } else if (currentHealth < 0) {
             currentHealth = 0;
         }
-        world.consoleLog(this, "Current health is " + currentHealth + ".");
+        world.consoleLog(this, String.format("%d", currentHealth));
     }
 
     public Creature(Color color, char glyph, World world, int health, int stepInterval) {
@@ -44,11 +44,11 @@ public abstract class Creature extends Entity implements Mobile, Passive {
 
     @Override
     public boolean takeStep(Direction direction, int frame) {
-        if (direction != null && (frame == 1 || frame - lastStepFrame >= stepInterval)) {
+        if (direction != null && (lastStepFrame == 0 || frame - lastStepFrame >= stepInterval)) {
             lastStepFrame = frame;
-            int newX = getX() + direction.diffX();
-            int newY = getY() + direction.diffY();
-            world.removeForeground(getX(), getY());
+            int x = getX(), y = getY();
+            int newX = x + direction.diffX(), newY = y + direction.diffY();
+            world.removeForeground(x, y);
             world.putForeground(this, newX, newY);
             return true;
         } else {
@@ -57,24 +57,9 @@ public abstract class Creature extends Entity implements Mobile, Passive {
     }
 
     @Override
-    public int detectDamage() {
-        int damageTaken = 0;
-        for (Direction probe : Direction.values()) {
-            Thing front = world.getForeground(this, probe);
-            if (front instanceof Aggressive) {
-                damageTaken += ((Aggressive) front).getDamage(this);
-            }
-        }
-        return damageTaken;
-    }
+    public abstract int detectDamage();
 
     @Override
-    public boolean takeDamage(int damage, int frame) {
-        if (damage > 0) {
-            changeCurrentHealth(-damage);
-            return true;
-        } else {
-            return false;
-        }
-    }
+    public abstract boolean takeDamage(int damage, int frame);
+
 }

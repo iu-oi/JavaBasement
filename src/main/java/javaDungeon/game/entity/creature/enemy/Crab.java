@@ -10,12 +10,12 @@ import javaDungeon.game.weapon.GrenadeLauncher;
 
 public class Crab extends RangedEnemy<GrenadeLauncher> {
 
-    public static final Color COLOR = new Color(255, 0, 255);
+    public static final Color COLOR = Color.red;
     public static final char GLYPH = (char) 0x9d;
     public static final int HEALTH = 20;
     public static final int STEP_INTERVAL = 6;
     public static final int DAMAGE = 1;
-    public static final int RANGED_ATTACK_INTERVAL = 10;
+    public static final int RANGED_ATTACK_INTERVAL = 20;
 
     protected final Random generator = new Random(new Date().getTime());
     protected Creature creatureTracked;
@@ -45,17 +45,11 @@ public class Crab extends RangedEnemy<GrenadeLauncher> {
 
     @Override
     public Direction nextRangedAttack() {
-        Direction result;
         int diffY = getY() - creatureTracked.getY();
-        if (diffY > 0) {
-            result = Direction.UP;
-        } else if (diffY < 0) {
-            result = Direction.DOWN;
-        } else {
-            return null;
-        }
-        if (world.testForeground(this, result)) {
-            return result;
+        if (diffY > 0 && world.testForeground(this, Direction.UP)) {
+            return Direction.UP;
+        } else if (diffY < 0 && world.testForeground(this, Direction.DOWN)) {
+            return Direction.DOWN;
         } else {
             return null;
         }

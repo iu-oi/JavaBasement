@@ -4,8 +4,8 @@ import javaDungeon.game.Direction;
 
 public interface Ranged {
 
-    public Direction nextRangedAttack();
+    Direction nextRangedAttack();
 
-    public boolean rangedAttack(Direction direction, int frame);
+    boolean rangedAttack(Direction direction, int frame);
 
 }

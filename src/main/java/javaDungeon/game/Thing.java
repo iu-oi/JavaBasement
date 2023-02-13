@@ -19,11 +19,11 @@ public class Thing implements Serializable{
     private Tile tile;
 
     public int getX() {
-        return this.tile.getxPos();
+        return this.tile.getX();
     }
 
     public int getY() {
-        return this.tile.getyPos();
+        return this.tile.getY();
     }
 
     public void setTile(Tile tile) {
