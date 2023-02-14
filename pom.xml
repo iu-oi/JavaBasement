@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>net.iu_oi</groupId>
-    <artifactId>java-dungeon</artifactId>
+    <artifactId>java-basement</artifactId>
     <version>0.1</version>
 
     <properties>
@@ -23,7 +23,7 @@
                     <archive>
                         <manifest>
                             <addClasspath>true</addClasspath>
-                            <mainClass>javaDungeon.Application</mainClass>
+                            <mainClass>javaBasement.Application</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
